@@ -28,7 +28,7 @@ class Nurse implements \JsonSerializable
     /**
      * @Column(type="integer", name="is_valid", nullable=false)
      */
-    protected $is_valid;
+    protected $validate;
 
 
     /* ------------ GETTERS ------------ */
@@ -44,95 +44,57 @@ class Nurse implements \JsonSerializable
     }
 
     /**
-     * Gets the value of firstname.
+     * Gets the value of user.
      *
-     * @return string
+     * @return User
      */
-    public function getFirstname()
+    public function getUser()
     {
-        return $this->firstname;
+        return $this->user;
+    }
+
+    public function getBirthdate($format = null)
+    {
+        if (null !== $format) {
+            return $this->birthdate->format($format);
+        }
+        return $this->birthdate;
     }
 
     /**
-     * Gets the value of lastname.
+     * Gets the value of validation.
      *
-     * @return string
+     * @return integer
      */
-    public function getLastname()
+    public function getValidation()
     {
-        return $this->lastname;
-    }
-
-        /**
-     * Gets the value of email.
-     *
-     * @return string
-     */
-    public function getEmail()
-    {
-        return $this->email;
-    }
-
-    /**
-     * Gets the value of longitude.
-     *
-     * @return float
-     */
-    public function getLongitude()
-    {
-        return $this->longitude;
-    }
-
-    /**
-     * Gets the value of latitude.
-     *
-     * @return float
-     */
-    public function getLatitude()
-    {
-        return $this->latitude;
+        return $this->validate;
     }
 
     /* ------------ SETTERS ------------ */
 
     /**
-     * Sets the value of firstname.
+     * Sets the value of birthdate.
      *
-     * @param string $firstname the firstname
+     * @param string $birthdate the birthdate
      *
      * @return self
      */
-    public function setFirstname($firstname)
+    public function setBirthdate($birthdate)
     {
-        $this->firstname = $firstname;
-
-        return $this;
+        $this->birthdate = new \Datetime($birthdate);
     }
 
     /**
-     * Sets the value of lastname.
+     * Sets the value of user.
      *
-     * @param string $lastname the lastname
-     *
-     * @return self
-     */
-    public function setLastname($lastname)
-    {
-        $this->lastname = $lastname;
-
-        return $this;
-    }
-
-    /**
-     * Sets the value of email.
-     *
-     * @param string $email the email
+     * @param string $user the user
      *
      * @return self
      */
-    public function setEmail($email)
+    public function setUser(User $user)
     {
-        $this->email = $email;
+        $this->user = $user;
 
         return $this;
     }
@@ -150,35 +112,20 @@ class Nurse implements \JsonSerializable
 
         return $this;
     }
+
     /**
-     * Sets the value of longitude.
+     * Sets the value of validate.
      *
-     * @param float $longitude the longitude
+     * @param string $validate the validate
      *
      * @return self
      */
-    public function setLongitude($longitude)
+    public function setValidate($validate)
     {
-        $this->longitude = $longitude;
+        $this->validate = $validate;
 
         return $this;
     }
-
-    /**
-     * Sets the value of latitude.
-     *
-     * @param float $latitude the latitude
-     *
-     * @return self
-     */
-    public function setLatitude($latitude)
-    {
-        $this->latitude = $latitude;
-
-        return $this;
-    }
-
-
 
     /* ------------ UTILS ------------ */
 
@@ -186,11 +133,14 @@ class Nurse implements \JsonSerializable
     {
         return [
             "id"        => $this->getId(),
-            "firstname" => $this->getFirstname(),
-            "lastname"  => $this->getLastname(),
-            "email"     => $this->getEmail(),
-            "longitude" => $this->getLongitude(),
-            "latitude"  => $this->getLatitude()
+            "birthdate" => $this->getBirthdate('Y-m-d'),
+            "validate"  => 1 === $this->getValidation() ? true : false,
+            "firstname" => $this->user->getFirstname(),
+            "lastname"  => $this->user->getLastname(),
+            "email"     => $this->user->getEmail(),
+            "longitude" => $this->user->getLongitude(),
+            "latitude"  => $this->user->getLatitude(),
+            "children"  => $this->user->getChildren()
         ];
     }
 

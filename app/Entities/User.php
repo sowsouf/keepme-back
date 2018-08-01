@@ -44,6 +44,16 @@ class User implements \JsonSerializable
      */
     protected $latitude;
 
+    /**
+     * @OneToMany(targetEntity="Children", mappedBy="user")
+     */
+    protected $children;
+
+    public function __construct() {
+        $this->children = new ArrayCollection();
+    }
+
+
     /* ------------ GETTERS ------------ */
 
     /**
@@ -104,6 +114,33 @@ class User implements \JsonSerializable
     public function getLatitude()
     {
         return $this->latitude;
+    }
+
+    /**
+     * Gets the value of children.
+     *
+     * @return ArrayCollection
+     */
+    public function getChildren()
+    {
+        $user_children = $this->children->toArray();
+
+        if (empty($user_children)) {
+            return null;
+        }
+
+        $children = array_map(
+            function ($child) {
+                return [
+                    "id"          => $child->getId(),
+                    "firstname"   => $child->getFirstname(),
+                    "birthdate"   => $child->getBirthdate('Y-m-d')
+                ];
+            },
+            $user_children
+        );
+
+        return $children;
     }
 
     /* ------------ SETTERS ------------ */
@@ -203,7 +240,8 @@ class User implements \JsonSerializable
             "lastname"  => $this->getLastname(),
             "email"     => $this->getEmail(),
             "longitude" => $this->getLongitude(),
-            "latitude"  => $this->getLatitude()
+            "latitude"  => $this->getLatitude(),
+            "children"  => $this->getChildren()
         ];
     }
 
