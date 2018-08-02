@@ -47,7 +47,6 @@ class UserController implements ControllerProviderInterface
         return $app->json($all_users, 200);
     }
 
-
     /**
      * Récupère un utilisateur selon son id
      *
@@ -68,7 +67,6 @@ class UserController implements ControllerProviderInterface
      *
      * @param Application    $app      Silex Application
      * @param Request        $req      Request
-     * @param integer        $user_id  id du user
      *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */

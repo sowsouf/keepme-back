@@ -64,10 +64,10 @@ class User extends \KeepMe\Entities\User implements \Doctrine\ORM\Proxy\Proxy
     public function __sleep()
     {
         if ($this->__isInitialized__) {
-            return ['__isInitialized__', 'firstname', 'lastname', 'email', 'password', 'longitude', 'latitude', 'id'];
+            return ['__isInitialized__', 'firstname', 'lastname', 'email', 'password', 'longitude', 'latitude', 'children', 'id'];
         }
 
-        return ['__isInitialized__', 'firstname', 'lastname', 'email', 'password', 'longitude', 'latitude', 'id'];
+        return ['__isInitialized__', 'firstname', 'lastname', 'email', 'password', 'longitude', 'latitude', 'children', 'id'];
     }
 
     /**
@@ -241,6 +241,17 @@ class User extends \KeepMe\Entities\User implements \Doctrine\ORM\Proxy\Proxy
         $this->__initializer__ && $this->__initializer__->__invoke($this, 'getLatitude', []);
 
         return parent::getLatitude();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getChildren()
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getChildren', []);
+
+        return parent::getChildren();
     }
 
     /**

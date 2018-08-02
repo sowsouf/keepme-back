@@ -30,7 +30,7 @@ class Children implements \JsonSerializable
     protected $description;
 
     /**
-     * @OneToOne(targetEntity="user")
+     * @ManyToOne(targetEntity="user", inversedBy="children")
      * @JoinColumn(name="user_id", referencedColumnName="id")
      */
     protected $user;
