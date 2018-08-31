@@ -25,8 +25,10 @@ class UserController implements ControllerProviderInterface
         // On récupère tous les utilisateurs
         $controllers->get('/users', [$this, 'getAllUsers']);
 
+        // On récupère un utilisateur selon un id
         $controllers->get('/user/{user_id}', [$this, 'getUserById']);
 
+        // On crée un utilisateur
         $controllers->post('/user', [$this, 'createUser']);
 
         return $controllers;
