@@ -7,6 +7,7 @@ use Silex\ControllerCollection;
 use Silex\Api\ControllerProviderInterface;
 
 Use KeepMe\Entities\Nurse;
+Use KeepMe\Entities\User;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,7 +30,7 @@ class NurseController implements ControllerProviderInterface
         $controllers->get('/nurse/{nurse_id}', [$this, 'getNurseById']);
 
         // On crée un utilisateur
-        $controllers->post('/nurse', [$this, 'createNurse']); // WORK IN PROGRESS
+        $controllers->post('{user_id}/nurse', [$this, 'createNurse']); // WORK IN PROGRESS
 
         // On valide un utilisateur
         $controllers->put('/nurse/{nurse_id}', [$this, 'validateNurse']);
@@ -66,28 +67,38 @@ class NurseController implements ControllerProviderInterface
         return $app->json($nurse, 200);
     }
 
-    /** //!!\\ WORK IN PROGRESS //!!\\
+    /**
     * Création d'une nurse
     *
     * @param Application $app       Silex Application
     * @param Request     $req       Request
+    * @param integer     $user_id   id du user
     *
     * @return \Symfony\Component\HttpFoundation\JsonResponse
     */
-   public function createNurse(Application $app, Request $req)
+   public function createNurse(Application $app, Request $req, $user_id)
    {
+       $user = $app["repositories"]("User")->findOneById($user_id);
+       if (null === $user) {
+           return $app->abort(404, "User not found");
+       }
+
        $datas = $req->request->all();
 
        $nurse = new Nurse();
+       $nurse->setBirthdate($datas["birthdate"]);
+       $nurse->setUser($user);
+       $nurse->setValidate(0);
 
 
+       $app["orm.em"]->persist($nurse);
+       $app["orm.em"]->flush();
 
        return $app->json($nurse, 200);
    }
-   //!!\\ WORK IN PROGRESS //!!\\
 
    /**
-   * Création d'une nurse
+   * Validation d'une nurse
    *
    * @param Application $app       Silex Application
    * @param integer     $nurse_id  id de la nurse

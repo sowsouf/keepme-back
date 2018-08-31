@@ -30,7 +30,6 @@ class Nurse implements \JsonSerializable
      */
     protected $validate;
 
-
     /* ------------ GETTERS ------------ */
 
     /**
@@ -100,20 +99,6 @@ class Nurse implements \JsonSerializable
     }
 
     /**
-     * Sets the value of password.
-     *
-     * @param string $password the password
-     *
-     * @return self
-     */
-    public function setPassword($password)
-    {
-        $this->password = $password;
-
-        return $this;
-    }
-
-    /**
      * Sets the value of validate.
      *
      * @param string $validate the validate
@@ -134,13 +119,7 @@ class Nurse implements \JsonSerializable
         return [
             "id"        => $this->getId(),
             "birthdate" => $this->getBirthdate('Y-m-d'),
-            "validate"  => 1 === $this->getValidation() ? true : false,
-            "firstname" => $this->user->getFirstname(),
-            "lastname"  => $this->user->getLastname(),
-            "email"     => $this->user->getEmail(),
-            "longitude" => $this->user->getLongitude(),
-            "latitude"  => $this->user->getLatitude(),
-            "children"  => $this->user->getChildren()
+            "validate"  => 1 === $this->getValidation() ? true : false
         ];
     }
 
@@ -157,14 +136,9 @@ class Nurse implements \JsonSerializable
     public function setProperties(array $data)
     {
         $mandatory_fields = [
-            "id",
-            "firstname",
-            "lastname",
-            "login",
-            "email",
-            "password",
-            "longitude",
-            "latitude"
+            "id"       ,
+            "birthdate",
+            "validate"
         ];
 
         $fields = array_intersect(
