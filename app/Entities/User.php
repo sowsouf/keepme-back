@@ -200,6 +200,7 @@ class User implements \JsonSerializable
 
         return $this;
     }
+    
     /**
      * Sets the value of longitude.
      *
