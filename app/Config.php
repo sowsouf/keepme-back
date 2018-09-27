@@ -49,6 +49,8 @@ class Config implements ServiceProviderInterface
         $app->after(function (Request $request, Response $response) {
             $response = new Response();
             $response->headers->set('Access-Control-Allow-Origin', '*');
+            $response->headers->set('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, PATCH, OPTIONS');
+            $response->headers->set('Access-Control-Allow-Headers', 'origin, content-type, accept');
         });
 
         // On peut faire $req->request->all() ou $req->request->get('mavariable')
@@ -63,8 +65,6 @@ class Config implements ServiceProviderInterface
             if (false === is_array($params)) {
                 $app->abort(400, "Invalid JSON data");
             }
-
-            
 
             $request->request->replace($params);
         });
