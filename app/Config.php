@@ -15,6 +15,7 @@ use Saxulum\Console\Provider\ConsoleProvider;
 use Saxulum\DoctrineOrmManagerRegistry\Provider\DoctrineOrmManagerRegistryProvider;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 
@@ -43,7 +44,12 @@ class Config implements ServiceProviderInterface
         $this->registerEnvironmentParams($app);
         $this->registerServiceProviders($app);
         $this->registerRoutes($app);
-        $app->after($app["cors"]);
+        //$app->after($app["cors"]);
+
+        $app->after(function (Request $request, Response $response) {
+            $response = new Response();
+            $response->headers->set('Access-Control-Allow-Origin', '*');
+        });
 
         // On peut faire $req->request->all() ou $req->request->get('mavariable')
         // au lieu de faire un json_decode($req->getContent(), true)
@@ -57,6 +63,8 @@ class Config implements ServiceProviderInterface
             if (false === is_array($params)) {
                 $app->abort(400, "Invalid JSON data");
             }
+
+            
 
             $request->request->replace($params);
         });
