@@ -25,6 +25,6 @@ class HomeController implements ControllerProviderInterface
 
     public function index(Application $app)
     {
-        return $app->json("home", 200);
+        return $app->json("BAIFIFHZIOHZ", 200);
     }
 }

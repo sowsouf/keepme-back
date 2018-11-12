@@ -52,11 +52,8 @@ class Nurse implements \JsonSerializable
         return $this->user;
     }
 
-    public function getBirthdate($format = null)
+    public function getBirthdate()
     {
-        if (null !== $format) {
-            return $this->birthdate->format($format);
-        }
         return $this->birthdate;
     }
 

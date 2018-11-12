@@ -132,11 +132,8 @@ class Post implements \JsonSerializable
      *
      * @return datetime
      */
-    public function getStart($format = null)
+    public function getStart()
     {
-        if (null !== $format) {
-            return $this->start->format($format);
-        }
         return $this->start;
     }
 
@@ -145,11 +142,8 @@ class Post implements \JsonSerializable
      *
      * @return datetime
      */
-    public function getEnd($format = null)
+    public function getEnd()
     {
-        if (null !== $format) {
-            return $this->end->format($format);
-        }
         return $this->end;
     }
 
@@ -305,8 +299,8 @@ class Post implements \JsonSerializable
             "user"        => $this->getUser(),
             "longitude"   => $this->getLongitude(),
             "latitude"    => $this->getLatitude(),
-            "start"       => $this->getStart("Y-m-d HH:mm:ss"),
-            "end"         => $this->getend("Y-m-d HH:mm:ss"),
+            // "start"       => $this->getStart("Y-m-d HH:mm:ss"),
+            // "end"         => $this->getEnd("c"),
             "children"    => $this->getNbChildren(),
             "hourly_rate" => $this->getHourlyRate()
         ];
