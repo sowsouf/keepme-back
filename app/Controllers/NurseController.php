@@ -2,6 +2,9 @@
 
 namespace KeepMe\Controllers;
 
+use Ofat\SilexJWT\JWTAuth;
+use Ofat\SilexJWT\Middleware\JWTTokenCheck;
+
 use Silex\Application;
 use Silex\ControllerCollection;
 use Silex\Api\ControllerProviderInterface;
@@ -24,16 +27,20 @@ class NurseController implements ControllerProviderInterface
         $controllers = $app['controllers_factory'];
 
         // On récupère toutes les nurses
-        $controllers->get('/nurses', [$this, 'getAllNurses']);
+        $controllers->get('/nurses', [$this, 'getAllNurses'])
+                    ->before(new JWTTokenCheck());
 
         // On récupère une nurse selon son id
-        $controllers->get('/nurse/{nurse_id}', [$this, 'getNurseById']);
+        $controllers->get('/nurse/{nurse_id}', [$this, 'getNurseById'])
+                    ->before(new JWTTokenCheck());
 
         // On crée un utilisateur
-        $controllers->post('{user_id}/nurse', [$this, 'createNurse']); // WORK IN PROGRESS
+        $controllers->post('/nurse', [$this, 'createNurse'])
+                    ->before(new JWTTokenCheck()); // WORK IN PROGRESS
 
         // On valide un utilisateur
-        $controllers->put('/nurse/{nurse_id}', [$this, 'validateNurse']);
+        $controllers->put('/nurse/{nurse_id}', [$this, 'validateNurse'])
+                    ->before(new JWTTokenCheck());
 
         return $controllers;
     }
@@ -76,25 +83,28 @@ class NurseController implements ControllerProviderInterface
     *
     * @return \Symfony\Component\HttpFoundation\JsonResponse
     */
-   public function createNurse(Application $app, Request $req, $user_id)
+   public function createNurse(Application $app, Request $req)
    {
-       $user = $app["repositories"]("User")->findOneById($user_id);
-       if (null === $user) {
-           return $app->abort(404, "User not found");
-       }
+        $token      = substr($request->headers->get('authorization'), 7);
+        $token_user = $app['jwt_auth']->getPayload($token)['sub'];
 
-       $datas = $req->request->all();
+        $user = $app["repositories"]("User")->findOneById($token_user->id);
+        if (null === $user) {
+            return $app->abort(404, "User not found");
+        }
 
-       $nurse = new Nurse();
-       $nurse->setBirthdate($datas["birthdate"]);
-       $nurse->setUser($user);
-       $nurse->setValidate(0);
+        $datas = $req->request->all();
+
+        $nurse = new Nurse();
+        $nurse->setBirthdate($datas["birthdate"]);
+        $nurse->setUser($user);
+        $nurse->setValidate(0);
 
 
-       $app["orm.em"]->persist($nurse);
-       $app["orm.em"]->flush();
+        $app["orm.em"]->persist($nurse);
+        $app["orm.em"]->flush();
 
-       return $app->json($nurse, 200);
+        return $app->json($nurse, 200);
    }
 
    /**

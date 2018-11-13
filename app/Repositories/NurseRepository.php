@@ -12,4 +12,18 @@ Use KeepMe\Entities\Nurse;
  */
 class NurseRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function findNurseByUserId($user_id) 
+    {
+        $dql = 
+            " SELECT nurse 
+            FROM KeepMe\Entities\Nurse nurse
+            WHERE nurse.user = :user_id
+        ";
+
+        $query = $this->_em->createQuery($dql);
+        $query->setParameter("user_id", $user_id);
+        $query->setMaxResults(1);
+
+        return $query->getResult();
+    }
 }

@@ -14,7 +14,9 @@
         "jdesrosiers/silex-cors-provider": "dev-master",
 
         "guzzlehttp/guzzle": "~6.0",
-        "deployer/deployer": "^3.2"
+        "deployer/deployer": "^3.2",
+
+        "ofat/silex-jwt": "dev-master"
     },
     "require-dev": {
         "phpunit/phpunit": "^5"

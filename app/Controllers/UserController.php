@@ -6,11 +6,13 @@ use Silex\Application;
 use Silex\ControllerCollection;
 use Silex\Api\ControllerProviderInterface;
 
-Use KeepMe\Entities\User;
-
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+Use KeepMe\Entities\User;
+
+use Ofat\SilexJWT\JWTAuth;
+use Ofat\SilexJWT\Middleware\JWTTokenCheck;
 
 class UserController implements ControllerProviderInterface
 {
@@ -23,13 +25,16 @@ class UserController implements ControllerProviderInterface
         $controllers = $app['controllers_factory'];
 
         // On récupère tous les utilisateurs
-        $controllers->get('/users', [$this, 'getAllUsers']);
+        $controllers->get('/users', [$this, 'getAllUsers'])
+                    ->before(new JWTTokenCheck());
 
         // On récupère un utilisateur selon un id
-        $controllers->get('/user/{user_id}', [$this, 'getUserById']);
+        $controllers->get('/user/{user_id}', [$this, 'getUserById'])
+                    ->before(new JWTTokenCheck());
 
         // On crée un utilisateur
-        $controllers->post('/user', [$this, 'createUser']);
+        $controllers->post('/user', [$this, 'createUser'])
+                    ->before(new JWTTokenCheck());
 
         return $controllers;
     }
@@ -42,8 +47,11 @@ class UserController implements ControllerProviderInterface
      *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function getAllUsers(Application $app)
+    public function getAllUsers(Application $app, Request $request)
     {
+        $token = substr($request->headers->get('authorization'), 7);
+        $test = $app['jwt_auth']->getPayload($token);
+
         $all_users = $app["repositories"]("User")->findAll();
 
         return $app->json($all_users, 200);
@@ -91,6 +99,7 @@ class UserController implements ControllerProviderInterface
         $user = new User();
 
         $user->setProperties($datas);
+        $user->setPassword(sha1($datas["password"]));
         $app["orm.em"]->persist($user);
         $app["orm.em"]->flush();
 
