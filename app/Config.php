@@ -2,8 +2,11 @@
 
 namespace KeepMe;
 
+use Ofat\SilexJWT\JWTAuth;
+
 use Silex\Application;
 use Silex\Provider;
+
 
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
@@ -36,6 +39,33 @@ class Config implements ServiceProviderInterface
         }
     }
 
+    public function authBeforeFunction(Request $req, Application $app)
+    {
+        // On autorise les OPTIONS sans auth
+        if ('OPTIONS' === $req->getMethod()) {
+            return;
+        }
+
+        // On saute les droits et l'authentification 
+        $allowed = [];
+
+        //Register silex jwt service provider. Add jwt secret key
+        $app->register(new JWTAuth(), [
+            'jwt.secret' => 'azertyuiopqsdfghjklmwxcvbn'
+        ]);
+
+        //Example of jwt generating
+        // $app->get('/', function (Request $request) use ($app) {
+        //     $req->request->all();
+        //     $userId = 1;
+        //     $test = $app['jwt_auth']->generateToken($userId);
+
+        //     return $app->json(['token' => $app['jwt_auth']->getTokeb()]);
+        // });
+
+
+    }
+
     /**
      * @{inherit doc}
      */
@@ -52,6 +82,8 @@ class Config implements ServiceProviderInterface
             $response->headers->set('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, PATCH, OPTIONS');
             $response->headers->set('Access-Control-Allow-Headers', 'origin, content-type, accept');
         });
+
+        
 
         // On peut faire $req->request->all() ou $req->request->get('mavariable')
         // au lieu de faire un json_decode($req->getContent(), true)
@@ -102,6 +134,9 @@ class Config implements ServiceProviderInterface
     private function registerServiceProviders(Application $app)
     {
         $app->register(new Provider\ServiceControllerServiceProvider());
+        $app->register(new JWTAuth(), [
+            'jwt.secret' => 'azertyuiopqsdfghjklmwxcvbn'
+        ]);
 
         $app->register(new DoctrineServiceProvider());
         $app->register(new DoctrineOrmServiceProvider());

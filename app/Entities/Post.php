@@ -65,6 +65,12 @@ class Post implements \JsonSerializable
      */
     protected $note;
 
+    /**
+     * @OneToOne(targetEntity="nurse")
+     * @JoinColumn(name="nurse_id", referencedColumnName="id")
+     */
+    protected $nurse;
+
     /* ------------ GETTERS ------------ */
 
     /**
@@ -95,6 +101,16 @@ class Post implements \JsonSerializable
     public function getUser()
     {
         return $this->user;
+    }
+
+    /**
+     * Gets the value of nurse.
+     *
+     * @return Nurse
+     */
+    public function getNurse()
+    {
+        return $this->nurse;
     }
 
     /**
@@ -194,6 +210,20 @@ class Post implements \JsonSerializable
     public function setUser(User $user)
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Sets the value of Nurse.
+     *
+     * @param string $nurse the nurse
+     *
+     * @return self
+     */
+    public function setNurse(Nurse $nurse)
+    {
+        $this->nurse = $nurse;
 
         return $this;
     }
@@ -299,10 +329,11 @@ class Post implements \JsonSerializable
             "user"        => $this->getUser(),
             "longitude"   => $this->getLongitude(),
             "latitude"    => $this->getLatitude(),
-            // "start"       => $this->getStart("Y-m-d HH:mm:ss"),
-            // "end"         => $this->getEnd("c"),
+            "start"       => $this->getStart(),
+            "end"         => $this->getEnd(),
             "children"    => $this->getNbChildren(),
-            "hourly_rate" => $this->getHourlyRate()
+            "hourly_rate" => $this->getHourlyRate(),
+            "nurse"       => $this->getNurse()
         ];
     }
 

@@ -13,6 +13,8 @@ Use KeepMe\Entities\Post;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use Ofat\SilexJWT\JWTAuth;
+use Ofat\SilexJWT\Middleware\JWTTokenCheck;
 
 class PostController implements ControllerProviderInterface
 {
@@ -25,13 +27,20 @@ class PostController implements ControllerProviderInterface
         $controllers = $app['controllers_factory'];
 
         // On récupère toutes les posts
-        $controllers->get('/posts', [$this, 'getAllPosts']);
+        $controllers->get('/posts', [$this, 'getAllPosts'])
+                    ->before(new JWTTokenCheck());
 
         // On récupère une nurse selon son id
-        $controllers->get('/post/{post_id}', [$this, 'getPostById']);
+        $controllers->get('/post/{post_id}', [$this, 'getPostById'])
+                    ->before(new JWTTokenCheck());
 
         // On crée un utilisateur
-        $controllers->post('{user_id}/post', [$this, 'createPost']);
+        $controllers->post('/post', [$this, 'createPost'])
+                    ->before(new JWTTokenCheck());
+
+        // On attribue un post à une nurse
+        $controllers->put('/post/{post_id}/validate', [$this, 'validatePost'])
+                    ->before(new JWTTokenCheck());
 
         return $controllers;
     }
@@ -85,24 +94,51 @@ class PostController implements ControllerProviderInterface
     *   "hourly_rate": 9
     * }
     */
-   public function createPost(Application $app, Request $req, $user_id)
+   public function createPost(Application $app, Request $req)
    {
-       $user = $app["repositories"]("User")->findOneById($user_id);
-       if (null === $user) {
-           return $app->abort(404, "User not found");
-       }
+        $token      = substr($req->headers->get('authorization'), 7);
+        $token_user = $app['jwt_auth']->getPayload($token)['sub'];
 
-       $datas = $req->request->all();
+        $user = $app["repositories"]("User")->findOneById(10);
+        if (null === $user) {
+            return $app->abort(404, "User not found");
+        }
 
-       $post = new Post();
-       $post->setProperties($datas);
-       $post->setUser($user);
-       $post->setNbChildren($datas["nb_children"]);
-       $post->setHourlyRate($datas["hourly_rate"]);
+        $datas = $req->request->all();
 
-       $app["orm.em"]->persist($post);
-       $app["orm.em"]->flush();
+        $post = new Post();
+        $post->setProperties($datas);
+        $post->setUser($user);
+        $post->setNbChildren($datas["nb_children"]);
+        $post->setHourlyRate($datas["hourly_rate"]);
+
+        $app["orm.em"]->persist($post);
+        $app["orm.em"]->flush();
+        
+        return $app->json($post, 200);
+   }
+
+   public function validatePost(Application $app, Request $req, $post_id)
+   {
        
-       return $app->json($post, 200);
+        $token      = substr($req->headers->get('authorization'), 7);
+        $token_user = $app['jwt_auth']->getPayload($token)['sub'];
+        $nurse      = $app["repositories"]("Nurse")->findOneBy(array("user" => $token_user->id));
+        
+        if (null === $nurse || empty($nurse)) {
+            return $app->abort(403, "Forbidden");
+        }
+
+        $post = $app["repositories"]("Post")->findOneById($post_id);
+        if (null === $post || empty($post)) {
+            return $app->abort(404, "Post {$post_id} not exist");
+        }
+
+        $post->setNurse($nurse);
+        $app["orm.em"]->persist($nurse);
+        $app["orm.em"]->flush();
+
+        return $app->json($post, 200);
+
    }
 }
