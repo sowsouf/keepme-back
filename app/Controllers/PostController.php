@@ -102,7 +102,7 @@ class PostController implements ControllerProviderInterface
 
        $app["orm.em"]->persist($post);
        $app["orm.em"]->flush();
-
+       
        return $app->json($post, 200);
    }
 }

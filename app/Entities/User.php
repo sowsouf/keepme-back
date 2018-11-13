@@ -241,8 +241,7 @@ class User implements \JsonSerializable
             "lastname"  => $this->getLastname(),
             "email"     => $this->getEmail(),
             "longitude" => $this->getLongitude(),
-            "latitude"  => $this->getLatitude(),
-            "children"  => $this->getChildren()
+            "latitude"  => $this->getLatitude()
         ];
     }
 

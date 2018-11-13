@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "adcd6ad2678d1053e9d0360ac73a6f4b",
+    "content-hash": "eca414f59c6cb719646204dd42e69d3f",
     "packages": [
         {
             "name": "deployer/deployer",
@@ -1267,7 +1267,7 @@
                 "sharing",
                 "silex"
             ],
-            "time": "2017-09-20 03:16:26"
+            "time": "2017-09-20T03:16:26+00:00"
         },
         {
             "name": "justinrainbow/json-schema",
@@ -2196,6 +2196,7 @@
             "keywords": [
                 "Socket"
             ],
+            "abandoned": "react/socket",
             "time": "2016-12-06T10:54:49+00:00"
         },
         {
@@ -2390,6 +2391,7 @@
                 "saxulum",
                 "silex"
             ],
+            "abandoned": true,
             "time": "2015-12-01T11:57:28+00:00"
         },
         {
@@ -2587,6 +2589,7 @@
             "keywords": [
                 "microframework"
             ],
+            "abandoned": "symfony/flex",
             "time": "2017-05-03T15:21:42+00:00"
         },
         {
