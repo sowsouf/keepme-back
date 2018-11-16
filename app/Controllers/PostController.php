@@ -106,8 +106,6 @@ class PostController implements ControllerProviderInterface
             return $app->abort(404, "User not found");
         }
 
-        file_put_contents("test.txt", "Suite de fonction" . PHP_EOL, FILE_APPEND);
-
         $datas = $req->request->all();
 
         $post = new Post();
